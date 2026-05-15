@@ -7,32 +7,54 @@ Paste your draft email or text message, pick a tone, and let Claude refine it fo
 - **Email mode** — preserves greeting, body, and sign-off structure
 - **Text Message mode** — keeps it short and natural
 - **5 tone options** — Professional · Friendly & Polite · Concise & Direct · Formal · Casual
+- **Per-mode memory** — switching modes keeps each mode's draft and result intact
 - **Streaming output** — refined text appears in real time
 - **One-click copy** — copy the result straight to your clipboard
 
 ## Requirements
 
-- An [Anthropic API key](https://console.anthropic.com/settings/keys) (free to create; separate from Claude.ai subscriptions)
-- [uv](https://docs.astral.sh/uv/) — handles Python and all packages automatically
+- An [Anthropic API key](https://console.anthropic.com/settings/keys) — free to create; separate from Claude.ai subscriptions
+
+Everything else (Python 3.13, packages) is handled automatically by the launch script on first run.
+
+---
 
 ## Setup & Launch
 
+### macOS / Linux
+
 ```bash
-# 1. Clone the repo
 git clone https://github.com/YOUR_USERNAME/email-improver.git
 cd email-improver
-
-# 2. Run (handles everything on first launch)
+chmod +x run.sh
 ./run.sh
 ```
 
-`run.sh` will install `uv` if missing, download Python 3.13 (with a modern Tk bundled), create a virtual environment, install all packages, and launch the app — all in one step.
+### Windows
 
-On first launch, click **⚙ API Key** in the top-right corner and paste your Anthropic API key.  
-The key is stored locally at `~/.email-improver.json` and is never committed to the repo.
-
-## Every launch after that
-
-```bash
-./run.sh
 ```
+git clone https://github.com/YOUR_USERNAME/email-improver.git
+cd email-improver
+```
+
+Then either **double-click `run.bat`**, or run it in Command Prompt / PowerShell:
+
+```
+run.bat
+```
+
+---
+
+On **first launch**, the script will:
+1. Install [uv](https://docs.astral.sh/uv/) (fast Python manager) if not already present
+2. Download Python 3.13 with a modern Tk bundled
+3. Create a local virtual environment and install all packages
+
+On every launch after that it starts immediately.
+
+---
+
+## API key
+
+Click **⚙ API Key** in the top-right corner and paste your Anthropic API key.  
+It is stored locally (`~/.email-improver.json` on macOS/Linux, `%USERPROFILE%\.email-improver.json` on Windows) and is never committed to the repository.
