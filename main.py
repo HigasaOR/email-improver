@@ -55,6 +55,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.cfg = load_config()
+        self._appearance = self.cfg.get("appearance", "System")
         self.mode_var = ctk.StringVar(value="Email")
         self.tone_var = ctk.StringVar(value="Professional")
         self._mode_state: dict[str, dict[str, str]] = {
@@ -69,7 +70,7 @@ class App(ctk.CTk):
     # ── UI ────────────────────────────────────────────────────────────────
 
     def _build_ui(self):
-        ctk.set_appearance_mode("System")
+        ctk.set_appearance_mode(self._appearance)
         ctk.set_default_color_theme("blue")
 
         self.grid_rowconfigure(1, weight=1)
@@ -106,13 +107,26 @@ class App(ctk.CTk):
             width=200, font=ctk.CTkFont(size=13),
         ).pack(side="left")
 
-        # API key button
+        # Right-side buttons (theme toggle + API key)
+        right_frame = ctk.CTkFrame(bar, fg_color="transparent")
+        right_frame.grid(row=0, column=2, padx=18, pady=10)
+
+        self._theme_btn = ctk.CTkButton(
+            right_frame, text=self._theme_label(),
+            width=110, fg_color="transparent", border_width=1,
+            text_color=("gray10", "gray90"),
+            font=ctk.CTkFont(size=13),
+            command=self._toggle_appearance,
+        )
+        self._theme_btn.pack(side="left", padx=(0, 8))
+
         ctk.CTkButton(
-            bar, text="⚙  API Key", width=110,
+            right_frame, text="⚙  API Key", width=110,
             fg_color="transparent", border_width=1,
+            text_color=("gray10", "gray90"),
             font=ctk.CTkFont(size=13),
             command=self._open_settings,
-        ).grid(row=0, column=2, padx=18, pady=10)
+        ).pack(side="left")
 
     def _build_content(self):
         content = ctk.CTkFrame(self, fg_color="transparent")
@@ -165,6 +179,7 @@ class App(ctk.CTk):
         ctk.CTkButton(
             btn_frame, text="Clear", width=80,
             fg_color="transparent", border_width=1,
+            text_color=("gray10", "gray90"),
             font=ctk.CTkFont(size=13),
             command=self._clear,
         ).pack(side="left", padx=(0, 8))
@@ -176,6 +191,16 @@ class App(ctk.CTk):
         ).pack(side="left")
 
     # ── Actions ───────────────────────────────────────────────────────────
+
+    def _theme_label(self) -> str:
+        return "Light Mode" if self._appearance == "Dark" else "Dark Mode"
+
+    def _toggle_appearance(self):
+        self._appearance = "Light" if self._appearance == "Dark" else "Dark"
+        ctk.set_appearance_mode(self._appearance)
+        self._theme_btn.configure(text=self._theme_label())
+        self.cfg["appearance"] = self._appearance
+        save_config(self.cfg)
 
     def _on_mode_change(self):
         # Save current mode's content before switching
